@@ -1,12 +1,17 @@
 // orbitCamera.js
-// Very simple orbit camera using mouse drag and wheel for zoom.
+// Orbit camera with SHIFT-drag panning (like Blender)
 
 export class OrbitCamera {
   constructor(canvas) {
     this.canvas = canvas;
+
+    // Orbit state
     this.distance = 3;
     this.rotationX = 0;
     this.rotationY = 0;
+
+    // Pan state (moves target)
+    this.target = [0, 0, 0];
 
     this._initEvents();
   }
@@ -28,28 +33,54 @@ export class OrbitCamera {
     
     window.addEventListener('mousemove', (e) => {
       if (!dragging) return;
+
       const dx = e.clientX - lastX;
       const dy = e.clientY - lastY;
       lastX = e.clientX;
       lastY = e.clientY;
+
+      // ----------------------------------------------------
+      // SHIFT + drag → PAN the camera (move target)
+      // ----------------------------------------------------
+      if (e.shiftKey) {
+        const panSpeed = this.distance * 0.002; // pan speed scales with zoom
+
+        // Compute camera's local axes to move correctly in world space
+        const yaw = this.rotationY;
+        const cameraRight = [ Math.cos(yaw), 0, -Math.sin(yaw) ];
+        const cameraUp = [ 0, 1, 0 ];
+
+        // Move target sideways + up/down
+        this.target[0] += (-dx * panSpeed) * cameraRight[0] + (dy * panSpeed) * cameraUp[0];
+        this.target[1] += (dy * panSpeed) * cameraUp[1];
+        this.target[2] += (-dx * panSpeed) * cameraRight[2] + (dy * panSpeed) * cameraUp[2];
+
+        return; // do NOT orbit when shift-panning
+      }
+
+      // ----------------------------------------------------
+      // Normal drag → ORBIT
+      // ----------------------------------------------------
       this.rotationY += dx * 0.005;
       this.rotationX += dy * 0.005;
       this.rotationX = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, this.rotationX));
     });
 
+    // ----------------------------------------------------
+    // Zoom (scroll wheel)
+    // ----------------------------------------------------
     this.canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
       this.distance *= e.deltaY > 0 ? 1.1 : 0.9;
-      this.distance = Math.max(0.5, Math.min(20, this.distance));
+      this.distance = Math.max(0.1, Math.min(50, this.distance));
     });
   }
 
   getViewProjectionMatrix() {
-    // build view-projection matrix (column-major)
     const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
     const fovy = Math.PI / 4;
     const near = 0.1;
-    const far = 100.0;
+    const far = 200.0;
 
     const proj = mat4_perspective(fovy, aspect, near, far);
     const view = this._computeViewMatrix();
@@ -57,11 +88,12 @@ export class OrbitCamera {
   }
 
   _computeViewMatrix() {
-    const cx = Math.sin(this.rotationY) * Math.cos(this.rotationX) * this.distance;
-    const cz = Math.cos(this.rotationY) * Math.cos(this.rotationX) * this.distance;
-    const cy = Math.sin(this.rotationX) * this.distance;
+    // Compute orbit eye position relative to *target*
+    const cx = this.target[0] + Math.sin(this.rotationY) * Math.cos(this.rotationX) * this.distance;
+    const cz = this.target[2] + Math.cos(this.rotationY) * Math.cos(this.rotationX) * this.distance;
+    const cy = this.target[1] + Math.sin(this.rotationX) * this.distance;
 
-    return mat4_lookAt([cx, cy, cz], [0, 0, 0], [0, 1, 0]);
+    return mat4_lookAt([cx, cy, cz], this.target, [0, 1, 0]);
   }
 }
 
