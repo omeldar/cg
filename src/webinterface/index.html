@@ -23,8 +23,20 @@
     <body>
         <div id="app">
             <div id="ui-panel">
-                <h2>Normal Viewer</h2>
+                <h2>Visual 3D model Debugger.</h2>
+
+                <label>Load your own OBJ:</label><br>
                 <input type="file" id="file-input" accept=".obj" />
+
+                <div style="margin-top: 12px;">
+                    <label for="example-select">Or load an example model:</label><br>
+                    <select id="example-select">
+                        <option value="">-- choose example --</option>
+                        <option value="/examples/sdt_fish/fish.obj">Fish</option>
+                        <option value="/examples/sdt_cube/cube.obj">Cube</option>
+                    </select>
+                </div>
+
                 <div style="margin-top: 12px;">
                     <label for="view-mode">View mode:</label><br>
                     <select id="view-mode">
