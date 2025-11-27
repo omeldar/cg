@@ -1,11 +1,24 @@
 // meshLoader.js
 // Simple minimal .obj loader: parse vertices, normals, faces (triangles), output flat arrays.
 
+// ------------------------------------------------------------
+// Load OBJ from a File object (user upload)
+// ------------------------------------------------------------
 export async function loadOBJFromFile(file) {
   const text = await file.text();
   return parseOBJ(text);
 }
 
+// ------------------------------------------------------------
+// Load OBJ directly from a string (server-hosted models)
+// ------------------------------------------------------------
+export function loadOBJFromText(text) {
+  return parseOBJ(text);
+}
+
+// ------------------------------------------------------------
+// Minimal OBJ parser (positions, normals, triangular faces)
+// ------------------------------------------------------------
 function parseOBJ(text) {
   const lines = text.split('\n');
 
@@ -15,31 +28,52 @@ function parseOBJ(text) {
 
   for (let raw of lines) {
     const line = raw.trim();
-    if (line.length === 0 || line.startsWith('#')) continue;
+    if (!line || line.startsWith('#')) continue;
+
     const parts = line.split(/\s+/);
-    if (parts[0] === 'v') {
-      positions.push([ parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]) ]);
-    } else if (parts[0] === 'vn') {
-      normals.push([ parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3]) ]);
-    } else if (parts[0] === 'f') {
-      const faceVerts = parts.slice(1).map(vstr => {
-        const [ vi, vt, vni ] = vstr.split('/').map(s => s === '' ? undefined : parseInt(s) - 1);
+    const type = parts[0];
+
+    // v x y z
+    if (type === 'v') {
+      positions.push([
+        parseFloat(parts[1]),
+        parseFloat(parts[2]),
+        parseFloat(parts[3]),
+      ]);
+    }
+
+    // vn x y z
+    else if (type === 'vn') {
+      normals.push([
+        parseFloat(parts[1]),
+        parseFloat(parts[2]),
+        parseFloat(parts[3]),
+      ]);
+    }
+
+    // f v/t/n v/t/n v/t/n ...
+    else if (type === 'f') {
+      const verts = parts.slice(1).map(vstr => {
+        const [vi, vt, vni] = vstr
+          .split('/')
+          .map(s => (s === '' ? undefined : parseInt(s) - 1));
+
         return { vi, vni };
       });
-      if (faceVerts.length >= 3) {
-        // triangulate (fan)
-        for (let i = 1; i < faceVerts.length - 1; i++) {
-          faces.push([ faceVerts[0], faceVerts[i], faceVerts[i+1] ]);
-        }
+
+      // Triangulate face (fan method)
+      for (let i = 1; i < verts.length - 1; i++) {
+        faces.push([verts[0], verts[i], verts[i + 1]]);
       }
     }
   }
 
+  // Flatten into GPU-friendly arrays
   const finalPositions = [];
   const finalNormals = [];
   const indices = [];
 
-  let idxCounter = 0;
+  let idx = 0;
 
   for (const face of faces) {
     for (const vert of face) {
@@ -49,9 +83,10 @@ function parseOBJ(text) {
       if (vert.vni !== undefined && normals[vert.vni]) {
         finalNormals.push(...normals[vert.vni]);
       } else {
-        finalNormals.push(0, 0, 0);
+        finalNormals.push(0, 0, 0); // fallback if no normal provided
       }
-      indices.push(idxCounter++);
+
+      indices.push(idx++);
     }
   }
 
