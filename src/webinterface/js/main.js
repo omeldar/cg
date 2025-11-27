@@ -1,3 +1,4 @@
+// main.js
 import { GPURenderer } from './gpuRenderer.js';
 import { loadOBJFromFile, loadOBJFromText } from './meshLoader.js';
 import { OrbitCamera } from './orbitCamera.js';
@@ -13,12 +14,16 @@ async function main() {
   const exampleSelect = document.getElementById('example-select');
   const viewSelect = document.getElementById('view-mode');
 
-  // ---------------------------
-  // 1. Handle user file upload
-  // ---------------------------
+  // ----------------------------------------------------
+  // 1. USER FILE UPLOAD
+  // ----------------------------------------------------
   fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Clear example dropdown (so UI shows we are using a user model)
+    exampleSelect.value = "";
+
     try {
       const mesh = await loadOBJFromFile(file);
       renderer.setMesh(mesh);
@@ -28,12 +33,18 @@ async function main() {
     }
   });
 
-  // ---------------------------
-  // 2. Handle example model load
-  // ---------------------------
+  // ----------------------------------------------------
+  // 2. LOAD EXAMPLE MODEL FROM SERVER
+  // ----------------------------------------------------
   exampleSelect.addEventListener('change', async () => {
     const path = exampleSelect.value;
-    if (!path) return; // user picked the blank option
+
+    // "-- choose example --" selected
+    if (!path) return;
+
+    // Clear file input (so UI shows it's no longer a user-uploaded model)
+    fileInput.value = "";
+
     try {
       const response = await fetch(path);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -41,22 +52,23 @@ async function main() {
       const text = await response.text();
       const mesh = await loadOBJFromText(text);
       renderer.setMesh(mesh);
+
     } catch (err) {
-      console.error('Failed to load example OBJ:', err);
-      alert('Failed to load example OBJ (check console).');
+      console.error("Failed to load example OBJ:", err);
+      alert("Failed to load example OBJ (check console).");
     }
   });
 
-  // ---------------------------
-  // 3. View mode change
-  // ---------------------------
+  // ----------------------------------------------------
+  // 3. VIEW MODE SWITCHING
+  // ----------------------------------------------------
   viewSelect.addEventListener('change', () => {
     renderer.setViewMode(viewSelect.value);
   });
 
-  // ---------------------------
-  // 4. Animation loop
-  // ---------------------------
+  // ----------------------------------------------------
+  // 4. RENDER LOOP
+  // ----------------------------------------------------
   function frame() {
     if (renderer.device && camera) {
       const vp = camera.getViewProjectionMatrix();

@@ -1,56 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Visual Debugger for 3D models</title>
-        <link rel="stylesheet" href="css/styles.css">
+<head>
+    <meta charset="UTF-8">
+    <title>Visual Debugger for 3D Models</title>
+    <link rel="stylesheet" href="css/styles.css">
 
-        <!-- Standard favicon -->
-        <link rel="icon" href="/meta/favicon.ico" sizes="any">
+    <!-- Standard favicon -->
+    <link rel="icon" href="/meta/favicon.ico" sizes="any">
 
-        <!-- SVG favicon (preferred when supported) -->
-        <link rel="icon" href="/meta/favicon.svg" type="image/svg+xml">
+    <!-- SVG favicon (preferred when supported) -->
+    <link rel="icon" href="/meta/favicon.svg" type="image/svg+xml">
 
-        <!-- PNG fallbacks -->
-        <link rel="icon" type="image/png" href="/meta/favicon-96x96.png" sizes="96x96">
+    <!-- PNG fallbacks -->
+    <link rel="icon" type="image/png" href="/meta/favicon-96x96.png" sizes="96x96">
 
-        <!-- Apple Touch Icon -->
-        <link rel="apple-touch-icon" href="/meta/apple-touch-icon.png">
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="/meta/apple-touch-icon.png">
 
-        <!-- Web App Manifest -->
-        <link rel="manifest" href="/meta/site.webmanifest">
-    </head>
-    <body>
-        <div id="app">
-            <div id="ui-panel">
-                <h2>Visual 3D model Debugger.</h2>
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/meta/site.webmanifest">
+</head>
 
-                <label>Load your own OBJ:</label><br>
-                <input type="file" id="file-input" accept=".obj" />
+<body>
+    <div id="app">
+        <div id="ui-panel">
+            <h2>Normal Viewer</h2>
 
-                <div style="margin-top: 12px;">
-                    <label for="example-select">Or load an example model:</label><br>
-                    <select id="example-select">
-                        <option value="">-- choose example --</option>
-                        <option value="/examples/sdt_fish/fish.obj">Fish</option>
-                        <option value="/examples/sdt_cube/cube.obj">Cube</option>
-                    </select>
-                </div>
+            <!-- USER FILE UPLOAD -->
+            <label>Load your own OBJ:</label><br>
+            <input type="file" id="file-input" accept=".obj" />
 
-                <div style="margin-top: 12px;">
-                    <label for="view-mode">View mode:</label><br>
-                    <select id="view-mode">
-                        <option value="normalColor">Normal Color</option>
-                        <option value="frontBack">Front / Back Face</option>
-                    </select>
-                </div>
-                <hr>
-                <p>Use mouse to rotate/zoom.</p>
-            </div>
-            <div id="canvas-panel">
-                <canvas id="gpu-canvas"></canvas>
-            </div>
+            <br><br>
+
+            <!-- SERVER-HOSTED EXAMPLES -->
+            <label for="example-select">Or load example model:</label><br>
+            <select id="example-select">
+                <option value="">-- choose example --</option>
+                <option value="/examples/std_cube/cube.obj">Cube</option>
+                <option value="/examples/std_fish/fish.obj">Fish</option>
+            </select>
+
+            <br><br>
+
+            <!-- VIEW MODE -->
+            <label for="view-mode">View mode:</label><br>
+            <select id="view-mode">
+                <option value="normalColor">Normal Color</option>
+                <option value="frontBack">Front / Back Face</option>
+            </select>
+
+            <hr>
+            <p>Use mouse to rotate/zoom.</p>
         </div>
-        <script type="module" src="js/main.js"></script>
-    </body>
+
+        <div id="canvas-panel">
+            <canvas id="gpu-canvas"></canvas>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
 </html>
