@@ -1,38 +1,29 @@
 <!DOCTYPE html>
-
-<!--
- index.html
-
- Copyright (C) 2025 Eldar Omerovic
- This file is part of wgsl-quaternionic-raymarcher.
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- SPDX-License-Identifier: AGPL-3.0-or-later
--->
-
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quaternionic Raymarcher</title>
-    <link rel="stylesheet" href="style.css">
-
-    <link rel="icon" type="image/png" href="/meta/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/meta/favicon.svg" />
-    <link rel="shortcut icon" href="/meta/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/meta/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="MyWebSite" />
-    <link rel="manifest" href="/meta/site.webmanifest" />
-</head>
-<body>
-    <!-- This canvas is where all the WebGPU rendering happens. -->
-    <canvas id="gpuCanvas"></canvas>
-    
-    <!-- The main JavaScript file that controls the WebGPU logic. -->
-    <script src="main.js"></script>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Normal Viewer — WebGPU + WGSL</title>
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+        <div id="app">
+            <div id="ui-panel">
+                <h2>Normal Viewer</h2>
+                <input type="file" id="file-input" accept=".obj" />
+                <div style="margin-top: 12px;">
+                    <label for="view-mode">View mode:</label><br>
+                    <select id="view-mode">
+                        <option value="normalColor">Normal Color</option>
+                        <option value="frontBack">Front / Back Face</option>
+                    </select>
+                </div>
+                <hr>
+                <p>Use mouse to rotate/zoom.</p>
+            </div>
+            <div id="canvas-panel">
+                <canvas id="gpu-canvas"></canvas>
+            </div>
+        </div>
+        <script type="module" src="js/main.js"></script>
+    </body>
 </html>
