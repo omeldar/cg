@@ -1,63 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Visual Debugger for 3D Models</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8"/>
+  <title>Visual Debugger</title>
 
-    <!-- Standard favicon -->
-    <link rel="icon" href="/meta/favicon.ico" sizes="any">
+  <!-- Bootstrap Icons (for toggle button) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.14.0/font/bootstrap-icons.css">
 
-    <!-- SVG favicon (preferred when supported) -->
-    <link rel="icon" href="/meta/favicon.svg" type="image/svg+xml">
+  <!-- Optional: include Pico.css or your own CSS to style forms nicely -->
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.*/css/pico.min.css">
 
-    <!-- PNG fallbacks -->
-    <link rel="icon" type="image/png" href="/meta/favicon-96x96.png" sizes="96x96">
-
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="/meta/apple-touch-icon.png">
-
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="/meta/site.webmanifest">
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body>
-    <div id="app">
-        <div id="ui-panel">
-            <h2>Normal Viewer</h2>
+  <aside id="sidebar">
+    <h2>Visual Debugger</h2>
 
-            <!-- USER FILE UPLOAD -->
-            <label>Load your own OBJ:</label><br>
-            <input type="file" id="file-input" accept=".obj" />
+    <label for="file-input"><strong>Load your own OBJ:</strong></label>
+    <input type="file" id="file-input" accept=".obj">
 
-            <br><br>
+    <label for="example-select"><strong>Or load example model:</strong></label>
+    <select id="example-select">
+      <option value="">-- Choose example --</option>
+      <option value="/examples/std_cube/cube.obj">Cube</option>
+      <option value="/examples/std_fish/fish.obj">Fish</option>
+    </select>
 
-            <!-- SERVER-HOSTED EXAMPLES -->
-            <label for="example-select">Or load example model:</label><br>
-            <select id="example-select">
-                <option value="">-- choose example --</option>
-                <option value="/examples/std_cube/cube.obj">Cube</option>
-                <option value="/examples/std_fish/fish.obj">Fish</option>
-            </select>
+    <label for="view-mode"><strong>View mode:</strong></label>
+    <select id="view-mode">
+      <option value="normalColor">Normal Color</option>
+      <option value="frontBack">Front / Back Face</option>
+    </select>
 
-            <br><br>
+    <hr>
+    <p>Use mouse to rotate / zoom.<br>
+    <small>Shift + drag to pan (like Blender).</small></p>
+  </aside>
 
-            <!-- VIEW MODE -->
-            <label for="view-mode">View mode:</label><br>
-            <select id="view-mode">
-                <option value="normalColor">Normal Color</option>
-                <option value="frontBack">Front / Back Face</option>
-            </select>
+  <div id="main">
+    <button id="toggle-sidebar" title="Toggle UI">
+      <i class="bi bi-arrows-angle-expand"></i>
+    </button>
+    <canvas id="gpu-canvas"></canvas>
+  </div>
 
-            <hr>
-            <p>Use mouse to rotate/zoom.</p>
-        </div>
+  <script type="module" src="js/main.js"></script>
 
-        <div id="canvas-panel">
-            <canvas id="gpu-canvas"></canvas>
-        </div>
-    </div>
+  <script>
+    // Sidebar toggle logic
+    const btn = document.getElementById('toggle-sidebar');
+    const sidebar = document.getElementById('sidebar');
+    let collapsed = false;
 
-    <script type="module" src="js/main.js"></script>
+    btn.addEventListener('click', () => {
+      collapsed = !collapsed;
+      if (collapsed) {
+        sidebar.classList.add('collapsed');
+        btn.innerHTML = '<i class="bi bi-arrows-angle-contract"></i>';
+      } else {
+        sidebar.classList.remove('collapsed');
+        btn.innerHTML = '<i class="bi bi-arrows-angle-expand"></i>';
+      }
+    });
+  </script>
 </body>
 </html>
