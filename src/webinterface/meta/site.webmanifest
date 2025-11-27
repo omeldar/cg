@@ -1,6 +1,6 @@
 {
-  "name": "WGSL Quaternionic Raymarcher",
-  "short_name": "QUATMARCHER",
+  "name": "Visual Debugger for 3D models.",
+  "short_name": "3DMD",
   "icons": [
     {
       "src": "/meta/web-app-manifest-192x192.png",
