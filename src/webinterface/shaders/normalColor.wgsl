@@ -26,18 +26,19 @@ fn vs_main(in: VertexInput) -> VertexOutput {
 }
 
 @fragment
-fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
+fn fs_main(
+    in: VertexOutput,
+    @builtin(front_facing) isFront: bool
+) -> @location(0) vec4<f32> {
+
     if u.viewMode == 0u {
         let c = in.normal * 0.5 + vec3<f32>(0.5);
         return vec4<f32>(c, 1.0);
     } else {
-        let front = in.normal.z > 0.0;
-        var outColor: vec4<f32>;
-        if front {
-            outColor = vec4<f32>(0.0, 1.0, 0.0, 1.0);
+        if isFront {
+            return vec4<f32>(0.0, 1.0, 0.0, 1.0); // front = green
         } else {
-            outColor = vec4<f32>(1.0, 0.0, 0.0, 1.0);
+            return vec4<f32>(1.0, 0.0, 0.0, 1.0); // back = red
         }
-        return outColor;
     }
 }
